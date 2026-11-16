@@ -1,0 +1,69 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Category {
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  name      String @db.VarChar(60)
+  sortOrder Int    @default(0) @map("sort_order")
+  foods     Food[]
+
+  @@map("category_013_tb")
+}
+
+model Food {
+  id          Int         @id @default(autoincrement()) @db.UnsignedInt
+  categoryId  Int         @map("category_id") @db.UnsignedInt
+  name        String      @db.VarChar(100)
+  description String      @default("") @db.VarChar(255)
+  price       Decimal     @db.Decimal(10, 2)
+  imageUrl    String      @map("image_url") @db.VarChar(255)
+  isAvailable Boolean     @default(true) @map("is_available")
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_food_category_013")
+  orderItems  OrderItem[]
+
+  @@index([categoryId], map: "fk_food_category_013")
+  @@map("food_013_tb")
+}
+
+model Order {
+  id           Int         @id @default(autoincrement()) @db.UnsignedInt
+  trackCode    String      @unique(map: "track_code") @map("track_code") @db.Char(12)
+  customerName String      @map("customer_name") @db.VarChar(60)
+  total        Decimal     @db.Decimal(10, 2)
+  status       OrderStatus @default(pending)
+  createdAt    DateTime    @map("created_at") @db.DateTime(0)
+  updatedAt    DateTime    @map("updated_at") @db.DateTime(0)
+  items        OrderItem[]
+
+  @@index([status, id], map: "idx_order_status_009")
+  @@map("order_013_tb")
+}
+
+model OrderItem {
+  id       Int     @id @default(autoincrement()) @db.UnsignedInt
+  orderId  Int     @map("order_id") @db.UnsignedInt
+  foodId   Int     @map("food_id") @db.UnsignedInt
+  foodName String  @map("food_name") @db.VarChar(100)
+  price    Decimal @db.Decimal(10, 2)
+  quantity Int     @db.UnsignedInt
+  order    Order   @relation(fields: [orderId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_item_order_013")
+  food     Food    @relation(fields: [foodId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_item_food_013")
+
+  @@index([foodId], map: "fk_item_food_013")
+  @@index([orderId], map: "fk_item_order_013")
+  @@map("order_item_013_tb")
+}
+
+enum OrderStatus {
+  pending
+  preparing
+  ready
+  completed
+}

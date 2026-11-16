@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { isTrackingCode, statusLabel } from "../lib/order-tracking.ts";
+
+test("accepts only an exact 12-character tracking code", () => {
+  assert.equal(isTrackingCode("aB3dE5gH7jK9"), true);
+  assert.equal(isTrackingCode("short"), false);
+  assert.equal(isTrackingCode("aB3dE5gH7jK!"), false);
+  assert.equal(isTrackingCode(" aB3dE5gH7jK9"), false);
+  assert.equal(isTrackingCode(null), false);
+});
+
+test("gives each supported order status a customer-facing label", () => {
+  assert.equal(statusLabel("pending"), "รอดำเนินการ");
+  assert.equal(statusLabel("preparing"), "กำลังเตรียมอาหาร");
+  assert.equal(statusLabel("ready"), "พร้อมรับอาหาร");
+  assert.equal(statusLabel("completed"), "รับอาหารแล้ว");
+});
