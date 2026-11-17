@@ -6,20 +6,14 @@ export type TrackedOrder = {
   status: TrackingStatus;
   totalSatang: number;
   createdAt: string;
+  completedAt: string | null;
   items: Array<{ name: string; quantity: number; priceSatang: number }>;
 };
 
-const STATUS_LABELS: Record<TrackingStatus, string> = {
-  pending: "รอดำเนินการ",
-  preparing: "กำลังเตรียมอาหาร",
-  ready: "พร้อมรับอาหาร",
-  completed: "รับอาหารแล้ว",
-};
+export function isOrderNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0 && value <= 4294967295;
+}
 
 export function isTrackingCode(value: unknown): value is string {
   return typeof value === "string" && /^[A-Za-z0-9_-]{12}$/.test(value);
-}
-
-export function statusLabel(status: TrackingStatus): string {
-  return STATUS_LABELS[status];
 }

@@ -32,7 +32,7 @@ CREATE TABLE `order_013_tb` (
     `updated_at` DATETIME(0) NOT NULL,
 
     UNIQUE INDEX `track_code`(`track_code`),
-    INDEX `idx_order_status_009`(`status`, `id`),
+    INDEX `idx_order_status_013`(`status`, `id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

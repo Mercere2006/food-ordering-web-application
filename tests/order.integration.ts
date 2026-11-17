@@ -28,8 +28,13 @@ async function main() {
     const { prisma } = await import("../lib/prisma");
     disconnect = () => prisma.$disconnect();
     const { createOrder } = await import("../app/actions/order");
-    const { findTrackedOrder } = await import("../lib/order-tracking-service");
     const { POST: trackOrder } = await import("../app/api/orders/track/route");
+    const request = (body: string) => new Request("http://localhost/api/orders/track", { method: "POST", headers: { "Content-Type": "application/json" }, body });
+    async function findTrackedOrder(trackCode: string) {
+      const response = await trackOrder(request(JSON.stringify({ trackCode })));
+      if (!response.ok) return null;
+      return (await response.json()).order;
+    }
     const input = { customerName: "Test customer", trackCode: "TestOrder001", items: [{ id: 1, quantity: 2, priceSatang: 6500 }] };
 
     const result = await createOrder(input);
@@ -47,16 +52,23 @@ async function main() {
     assert.equal(tracked.orderNumber, order.id);
     assert.equal(tracked.customerName, "Test customer");
     assert.equal(tracked.totalSatang, 13000);
+    assert.equal(tracked.completedAt, null, "unfinished orders do not have a completion time");
     assert.deepEqual(tracked.items, [{ name: "Test food", quantity: 2, priceSatang: 6500 }]);
     assert.equal(await findTrackedOrder("testOrder001"), null, "tracking codes must be case-sensitive even with a case-insensitive database collation");
     assert.equal(await findTrackedOrder("invalid"), null);
-    const request = (body: string) => new Request("http://localhost/api/orders/track", { method: "POST", headers: { "Content-Type": "application/json" }, body });
     const trackResponse = await trackOrder(request(JSON.stringify({ trackCode: input.trackCode })));
     assert.equal(trackResponse.status, 200);
     assert.match(trackResponse.headers.get("cache-control") ?? "", /no-store/);
     const trackedBody = await trackResponse.json();
     assert.equal(trackedBody.order.orderNumber, order.id);
     assert.equal("trackCode" in trackedBody.order, false);
+    const byNumber = await trackOrder(request(JSON.stringify({ orderNumber: order.id })));
+    assert.equal(byNumber.status, 200);
+    assert.equal((await byNumber.json()).order.orderNumber, order.id);
+    assert.equal((await trackOrder(request(JSON.stringify({ orderNumber: 4294967295 })))).status, 404);
+    assert.equal((await trackOrder(request(JSON.stringify({ orderNumber: 0 })))).status, 400);
+    assert.equal((await trackOrder(request(JSON.stringify({ orderNumber: 1.5 })))).status, 400);
+    assert.equal((await trackOrder(request(JSON.stringify({ orderNumber: "1" })))).status, 400);
     assert.equal((await trackOrder(request(JSON.stringify({ trackCode: "testOrder001" })))).status, 404);
     assert.equal((await trackOrder(request("not-json"))).status, 400);
     assert.equal((await trackOrder(request(JSON.stringify({ trackCode: "short" })))).status, 400);
@@ -85,8 +97,13 @@ async function main() {
     assert.equal(vendorList.counts.pending, 1);
     assert.equal(vendorList.orders[0].customerName, "Test customer");
     assert.equal("trackCode" in vendorList.orders[0], false);
+    const pendingList = await vendorGet(vendorRequest("GET", undefined, true, "?status=pending"));
+    assert.equal((await pendingList.json()).orders.length, 1);
+    const preparingList = await vendorGet(vendorRequest("GET", undefined, true, "?status=preparing"));
+    assert.equal((await preparingList.json()).orders.length, 0);
     assert.equal((await vendorGet(vendorRequest("GET", undefined, true, "?status=bad"))).status, 400);
     assert.equal((await vendorPatch(vendorRequest("PATCH", { id: order.id, status: "preparing" }))).status, 409, "cannot skip a state");
+    assert.equal((await vendorPatch(vendorRequest("PATCH", { id: order.id, status: "unknown" }))).status, 409);
     const update = () => vendorPatch(vendorRequest("PATCH", { id: order.id, status: "pending" }));
     const concurrent = await Promise.all([update(), update()]);
     assert.deepEqual(concurrent.map((response) => response.status).sort(), [200, 409], "only one stale update may succeed");
@@ -94,7 +111,10 @@ async function main() {
     assert.equal((await vendorPatch(vendorRequest("PATCH", { id: order.id, status: "preparing" }))).status, 200);
     assert.equal((await findTrackedOrder(input.trackCode))?.status, "ready");
     assert.equal((await vendorPatch(vendorRequest("PATCH", { id: order.id, status: "ready" }))).status, 200);
-    assert.equal((await findTrackedOrder(input.trackCode))?.status, "completed");
+    const completed = await findTrackedOrder(input.trackCode);
+    assert.equal(completed?.status, "completed");
+    const savedCompleted = await prisma.order.findUniqueOrThrow({ where: { id: order.id } });
+    assert.equal(completed?.completedAt, savedCompleted.updatedAt.toISOString(), "completion time is the saved status change time");
     assert.equal((await vendorPatch(vendorRequest("PATCH", { id: order.id, status: "completed" }))).status, 409);
 
     const retry = await createOrder(input);

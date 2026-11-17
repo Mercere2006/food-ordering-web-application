@@ -36,33 +36,33 @@ async function MenuContent({ searchParams }: { searchParams: MenuSearchParams })
   const price = new Intl.NumberFormat("th-TH", { maximumFractionDigits: 2 });
 
   return (
-    <section className="menu-section" id="menu" aria-labelledby="categories-heading">
-      <div className="container">
-        <div className="menu-heading-wrap">
-          <h2 className="categories-heading" id="categories-heading">เมนูทั้งหมด</h2>
-          <svg className="menu-underline-curve" viewBox="0 0 100 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <section className="scroll-mt-5 pt-8 pb-[70px] max-[700px]:pt-[26px]" id="menu" aria-labelledby="categories-heading">
+      <div className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)]">
+        <div className="relative mb-1 inline-block [&_h2]:m-0 [&_h2]:text-2xl [&_h2]:font-black [&_h2]:tracking-[-.01em] [&_h2]:text-[#2e1d14]">
+          <h2 className="m-0 text-[17px] leading-[1.4] font-extrabold" id="categories-heading">เมนูทั้งหมด</h2>
+          <svg className="absolute -bottom-[7px] left-1 h-3 w-20" viewBox="0 0 100 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M 4 7 Q 45 13 96 4" stroke="#8b261e" strokeWidth="3.5" strokeLinecap="round" />
           </svg>
         </div>
-        <nav className="category-nav" aria-label="เลือกหมวดหมู่อาหาร">
-          <Link href="/#menu" scroll={false} prefetch={false} className={categoryId === null ? "category-link active" : "category-link"} aria-current={categoryId === null ? "page" : undefined}>ทั้งหมด</Link>
-          {categories.map((category) => <Link key={category.id} href={`/?category=${category.id}#menu`} scroll={false} prefetch={false} className={categoryId === category.id ? "category-link active" : "category-link"} aria-current={categoryId === category.id ? "page" : undefined}>{category.name}</Link>)}
+        <nav className="flex gap-2 overflow-x-auto pt-3 pb-1.5 [scrollbar-width:thin]" aria-label="เลือกหมวดหมู่อาหาร">
+          <Link href="/#menu" scroll={false} prefetch={false} className="inline-flex min-h-9 shrink-0 items-center rounded-[14px] border border-[#ebdccb] bg-white px-4 py-1.5 text-[13px] font-bold text-[#5a463a] transition-all hover:bg-[#f5ece1] hover:text-[#3d2a1e] aria-[current=page]:border-[#8b261e] aria-[current=page]:bg-[#8b261e] aria-[current=page]:text-white aria-[current=page]:shadow-[0_3px_8px_#8b261e30] motion-reduce:transition-none" aria-current={categoryId === null ? "page" : undefined}>ทั้งหมด</Link>
+          {categories.map((category) => <Link key={category.id} href={`/?category=${category.id}#menu`} scroll={false} prefetch={false} className="inline-flex min-h-9 shrink-0 items-center rounded-[14px] border border-[#ebdccb] bg-white px-4 py-1.5 text-[13px] font-bold text-[#5a463a] transition-all hover:bg-[#f5ece1] hover:text-[#3d2a1e] aria-[current=page]:border-[#8b261e] aria-[current=page]:bg-[#8b261e] aria-[current=page]:text-white aria-[current=page]:shadow-[0_3px_8px_#8b261e30] motion-reduce:transition-none" aria-current={categoryId === category.id ? "page" : undefined}>{category.name}</Link>)}
         </nav>
-        <div className="content-layout">
-          <div className="menu-list">
-            <div className="results-heading" aria-live="polite"><h2>{selectedName ?? "รายการอาหารทั้งหมด"}</h2><span>แสดง {foods.length} รายการ</span></div>
-            {foods.length === 0 ? <div className="empty-state"><p>ยังไม่มีเมนูในหมวดหมู่นี้</p><Link href="/#menu">ดูเมนูทั้งหมด</Link></div> : (
-              <div className="food-grid">
+        <div className="mt-7 grid grid-cols-[minmax(0,1fr)_384px] items-start gap-8 max-[1000px]:grid-cols-[minmax(0,1fr)_310px] max-[1000px]:gap-5 max-[700px]:mt-[23px] max-[700px]:grid-cols-1 max-[700px]:gap-[30px]">
+          <div className="min-w-0">
+            <div className="mt-0.5 mb-[18px] flex min-h-6 items-baseline justify-between gap-3 [&_h2]:m-0 [&_h2]:text-[17px] [&_h2]:leading-[1.4] [&_h2]:font-extrabold [&_span]:text-xs [&_span]:whitespace-nowrap [&_span]:text-[var(--muted)]" aria-live="polite"><h2>{selectedName ?? "รายการอาหารทั้งหมด"}</h2><span>แสดง {foods.length} รายการ</span></div>
+            {foods.length === 0 ? <div className="px-5 py-[70px] text-center text-[var(--muted)] [&_a]:text-[var(--accent-dark)] [&_a]:underline [&_a]:underline-offset-4"><p>ยังไม่มีเมนูในหมวดหมู่นี้</p><Link href="/#menu">ดูเมนูทั้งหมด</Link></div> : (
+              <div className="grid grid-cols-3 gap-[18px] max-[1000px]:grid-cols-2 max-[370px]:gap-2.5">
                 {foods.map((food) => (
-                  <article className="food-card" key={food.id}>
-                    <div className="food-photo"><FoodImage src={availableImage(food.imageUrl)} name={food.name} /><span className="food-category">{food.category.name}</span></div>
-                    <div className="food-details">
+                  <article className="flex min-w-0 flex-col justify-between overflow-hidden rounded-[22px] border border-[#ebdccb] bg-[#ffffffea] shadow-[0_2px_8px_#3d231108] backdrop-blur-[4px] transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_#3d231114]" key={food.id}>
+                    <div className="relative"><FoodImage src={availableImage(food.imageUrl)} name={food.name} /><span className="absolute top-[11px] left-[11px] max-w-[calc(100%-22px)] overflow-hidden rounded-full border border-[#ecdcd0] bg-[#fffffff0] px-[9px] py-[3px] text-[10px] font-bold text-ellipsis whitespace-nowrap text-[#4a3629]">{food.category.name}</span></div>
+                    <div className="flex flex-1 flex-col justify-between px-[15px] pt-[14px] pb-4 max-[370px]:p-3 [&_h3]:m-0 [&_h3]:text-base [&_h3]:leading-[1.35] [&_h3]:font-extrabold [&_h3]:text-[#2c1b12] max-[370px]:[&_h3]:text-[13px]">
                       <div>
                         <h3>{food.name}</h3>
-                        {food.description ? <p className="food-description">{food.description}</p> : null}
+                        {food.description ? <p className="mt-[5px] mb-2.5 line-clamp-2 min-h-[35px] text-xs leading-[1.45] text-[#786455]">{food.description}</p> : null}
                       </div>
-                      <div className="food-card-bottom">
-                        <p className="food-price">฿ {price.format(Number(food.price))}</p>
+                      <div className="mt-auto flex items-center justify-between gap-2.5 pt-1.5">
+                        <p className="m-0 text-[17px] font-black text-[#8b261e]">฿ {price.format(Number(food.price))}</p>
                         <AddToCartButton food={{ id: food.id, name: food.name, priceSatang: Math.round(Number(food.price) * 100) }} />
                       </div>
                     </div>
@@ -79,15 +79,15 @@ async function MenuContent({ searchParams }: { searchParams: MenuSearchParams })
 }
 
 function MenuLoading() {
-  return <section className="menu-section"><div className="container loading-state" role="status">กำลังโหลดเมนูอาหาร…</div></section>;
+  return <section className="scroll-mt-5 pt-8 pb-[70px] max-[700px]:pt-[26px]"><div className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)] py-[70px] px-5 text-center text-[var(--muted)]" role="status">กำลังโหลดเมนูอาหาร…</div></section>;
 }
 
 export default function Home({ searchParams }: { searchParams: MenuSearchParams }) {
   return (
     <>
       <SiteHeader active="customer" />
-      <main className="main-wrapper">
-        <svg className="decor-flower-left" viewBox="0 0 100 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <main className="relative min-h-[calc(100vh-140px)] overflow-x-clip">
+        <svg className="pointer-events-none absolute top-[360px] left-0 z-0 h-[240px] w-[90px] opacity-75 max-[900px]:hidden" viewBox="0 0 100 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M 0 20 Q 55 90 15 220" stroke="#798d6c" strokeWidth="2.5" strokeLinecap="round" />
           <path d="M 20 40 C 38 28 55 30 60 36 C 52 48 38 48 20 40 Z" fill="#7f9372" opacity="0.85" />
           <path d="M 32 68 C 50 56 68 62 72 70 C 60 80 46 78 32 68 Z" fill="#8ca07f" opacity="0.9" />
@@ -98,7 +98,7 @@ export default function Home({ searchParams }: { searchParams: MenuSearchParams 
           <path d="M 16 175 C 2 160 3 148 7 144 C 16 150 18 165 16 175 Z" fill="#748867" opacity="0.8" />
         </svg>
 
-        <svg className="decor-garden-right-bottom" viewBox="0 0 280 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg className="pointer-events-none absolute right-[10px] bottom-0 z-0 h-[140px] w-[280px] opacity-[.65] max-[900px]:h-[90px] max-[900px]:w-[180px] max-[900px]:opacity-30" viewBox="0 0 280 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M 170 65 L 210 25 L 270 65 Z" stroke="#8a7364" strokeWidth="2.5" strokeLinejoin="round" fill="#fdfbf7" />
           <rect x="180" y="65" width="85" height="55" rx="3" stroke="#8a7364" strokeWidth="2.5" fill="#fdfbf7" />
           <rect x="200" y="75" width="20" height="20" stroke="#8a7364" strokeWidth="2" />
@@ -127,10 +127,10 @@ export default function Home({ searchParams }: { searchParams: MenuSearchParams 
           <line x1="10" y1="126" x2="275" y2="126" stroke="#9e8979" strokeWidth="2" strokeLinecap="round" />
         </svg>
 
-        <div className="container">
-          <section className="hero" aria-labelledby="hero-heading">
-            <div className="hero-food-bg" aria-hidden="true" />
-            <svg className="hero-leaf" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <div className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)]">
+          <section className="relative mt-6 flex min-h-[220px] items-center overflow-hidden rounded-[26px] border border-[#dce7ee] bg-[linear-gradient(118deg,#eaf3fa_0%,#f1f6f7_38%,#fbf6ef_78%,#fcf8f2_100%)] shadow-[0_8px_24px_#1240680d] max-[700px]:mt-4 max-[700px]:min-h-0 max-[700px]:rounded-[20px]" aria-labelledby="hero-heading">
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-[58%] bg-[url('/menu-hero.webp')] bg-cover bg-right [mask-image:linear-gradient(to_right,transparent_0%,black_28%)] max-[700px]:w-full max-[700px]:opacity-[.22] max-[700px]:[mask-image:none]" aria-hidden="true" />
+            <svg className="pointer-events-none absolute -bottom-1.5 -left-1.5 z-[1] h-[100px] w-[100px] opacity-70" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M 5 115 C 20 85 45 65 85 45" stroke="#768a68" strokeWidth="2.5" strokeLinecap="round" />
               <path d="M 85 45 C 95 35 110 32 115 35 C 112 45 105 55 85 45 Z" fill="#889c79" opacity="0.85" />
               <path d="M 68 53 C 78 40 92 38 98 42 C 94 52 86 58 68 53 Z" fill="#7c906d" opacity="0.85" />
@@ -138,22 +138,22 @@ export default function Home({ searchParams }: { searchParams: MenuSearchParams 
               <path d="M 38 78 C 26 65 18 64 14 69 C 19 79 30 83 38 78 Z" fill="#768a68" opacity="0.85" />
               <path d="M 50 72 C 62 60 75 60 80 65 C 75 75 65 78 50 72 Z" fill="#829673" opacity="0.8" />
             </svg>
-            <div className="hero-content">
-              <span className="hero-label">🍽️ สั่งอาหารออนไลน์</span>
-              <div className="hero-title-wrap">
+            <div className="relative z-[2] max-w-[540px] px-10 py-[34px] max-[700px]:max-w-full max-[700px]:px-5 max-[700px]:py-6 [&_h1]:m-0 [&_h1]:text-[clamp(28px,3.6vw,44px)] [&_h1]:leading-[1.22] [&_h1]:font-black [&_h1]:tracking-[-.02em] [&_h1]:text-[#182838] max-[700px]:[&_h1]:text-[26px]">
+              <span className="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-[#cbdde9] bg-[#ffffffcc] px-3 py-1 text-[11px] font-bold tracking-[.02em] text-[#175685]">🍽️ สั่งอาหารออนไลน์</span>
+              <div className="relative mb-0.5 inline-block">
                 <h1 id="hero-heading">อิ่มจานโปรด</h1>
-                <svg className="hero-underline-curve" viewBox="0 0 120 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg className="absolute -bottom-1.5 left-[8%] h-[11px] w-[84%]" viewBox="0 0 120 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M 5 8 Q 60 14 115 4" stroke="#c0392b" strokeWidth="4" strokeLinecap="round" />
                 </svg>
               </div>
-              <p className="hero-subtitle">เลือกเมนูที่ชอบ แล้วเตรียมอิ่มได้เลย</p>
-              <p className="hero-note">สั่งสะดวก รวดเร็ว ไม่ต้องยืนรอคิวหน้าร้าน</p>
+              <p className="mt-2.5 text-[clamp(14px,1.5vw,17px)] leading-[1.45] font-bold text-[#3d5064]">เลือกเมนูที่ชอบ แล้วเตรียมอิ่มได้เลย</p>
+              <p className="mt-1 text-xs font-medium text-[#6d7f93]">สั่งสะดวก รวดเร็ว ไม่ต้องยืนรอคิวหน้าร้าน</p>
             </div>
           </section>
         </div>
         <Suspense fallback={<MenuLoading />}><MenuContent searchParams={searchParams} /></Suspense>
       </main>
-      <footer className="site-footer"><div className="container">อิ่มจานโปรด</div></footer>
+      <footer className="border-t border-[var(--border)] py-[22px] text-center text-xs text-[#96a4b6]"><div className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)]">©2026 อิ่มจานโปรด</div></footer>
     </>
   );
 }

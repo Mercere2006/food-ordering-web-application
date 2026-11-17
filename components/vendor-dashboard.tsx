@@ -13,7 +13,11 @@ import {
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { formatPrice } from "@/lib/cart";
 import { type TrackingStatus } from "@/lib/order-tracking";
-import { type VendorFilter, type VendorOrders } from "@/lib/vendor";
+
+type VendorFilter = "all" | TrackingStatus;
+type VendorOrderItem = { name: string; quantity: number; priceSatang?: number };
+type VendorOrder = { id: number; customerName: string; status: TrackingStatus; totalSatang: number; createdAt: string; items: VendorOrderItem[] };
+type VendorOrders = { orders: VendorOrder[]; counts: Record<VendorFilter, number>; page: number; pages: number };
 
 type FilterTab = {
   value: VendorFilter;
@@ -176,7 +180,7 @@ export function VendorDashboard() {
 
   if (!authenticated) {
     return (
-      <section className="container min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4">
+      <section className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)] min-h-[calc(100vh-160px)] flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
             <Store size={24} aria-hidden="true" />
@@ -276,7 +280,7 @@ export function VendorDashboard() {
   ];
 
   return (
-    <section className="container max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <section className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)] max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* 1. Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
         <div className="flex items-start sm:items-center gap-3">

@@ -1,12 +1,13 @@
-import { Store, UserRound, UtensilsCrossed } from "lucide-react";
+import { ClipboardList, Store, UserRound, UtensilsCrossed } from "lucide-react";
 import Link from "next/link";
 
-export function SiteHeader({ active }: { active: "customer" | "vendor" }) {
-  return <header className="site-header"><div className="container header-inner">
-    <Link href="/" className="brand" aria-label="อิ่มจานโปรด หน้าหลัก"><span className="brand-mark"><UtensilsCrossed size={20} aria-hidden="true" /></span><span>อิ่มจานโปรด<small>สั่งอาหารง่าย ๆ ในหน้าเดียว</small></span></Link>
-    <nav className="view-nav" aria-label="มุมมอง">
-      <Link href="/" prefetch={false} className={active === "customer" ? "view-current" : "view-link"} aria-current={active === "customer" ? "page" : undefined}><UserRound size={16} aria-hidden="true" /> หน้าลูกค้า</Link>
-      <Link href="/vendor" prefetch={false} className={active === "vendor" ? "view-current" : "view-link"} aria-current={active === "vendor" ? "page" : undefined}><Store size={16} aria-hidden="true" /> หน้าร้านค้า</Link>
+export function SiteHeader({ active }: { active: "customer" | "tracking" | "vendor" }) {
+  return <header className="border-b border-[var(--border)] bg-[var(--surface)]"><div className="mx-auto w-[min(calc(100%-48px),1216px)] max-[700px]:w-[calc(100%-32px)] flex min-h-[72px] items-center justify-between gap-4 max-[700px]:min-h-[68px] max-[450px]:gap-2">
+    <Link href="/" className="inline-flex items-center gap-3 text-[17px] leading-tight font-extrabold max-[700px]:text-[15px] max-[450px]:gap-1.5 max-[450px]:text-[13px] [&_small]:mt-[3px] [&_small]:block [&_small]:text-[10px] [&_small]:font-semibold [&_small]:text-[#91a0b6] max-[700px]:[&_small]:text-[9px] max-[450px]:[&_small]:hidden" aria-label="อิ่มจานโปรด หน้าหลัก"><span className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-[var(--accent)] text-white shadow-[0_3px_7px_#1269b22c] max-[700px]:h-[38px] max-[700px]:w-[38px] max-[450px]:h-8 max-[450px]:w-8 max-[450px]:rounded-[10px]"><UtensilsCrossed size={20} aria-hidden="true" /></span><span>อิ่มจานโปรด<small>สั่งอาหารง่าย ๆ ในหน้าเดียว</small></span></Link>
+    <nav className="flex gap-[3px] rounded-[14px] border border-[#e3e9f0] bg-[#eef2f7] p-1 text-xs font-bold" aria-label="มุมมอง">
+      <Link href="/" prefetch={false} className="flex min-h-9 items-center gap-[7px] rounded-[10px] px-3.5 whitespace-nowrap text-[#52647c] hover:bg-white hover:text-[var(--accent-dark)] aria-[current=page]:bg-[var(--accent)] aria-[current=page]:text-white max-[700px]:px-[9px] max-[700px]:text-[11px] max-[700px]:[&_svg]:hidden max-[450px]:px-[7px] max-[450px]:text-[10px]" aria-current={active === "customer" ? "page" : undefined}><UserRound size={16} aria-hidden="true" /> หน้าลูกค้า</Link>
+      <Link href="/tracking" prefetch={false} className="flex min-h-9 items-center gap-[7px] rounded-[10px] px-3.5 whitespace-nowrap text-[#52647c] hover:bg-white hover:text-[var(--accent-dark)] aria-[current=page]:bg-[var(--accent)] aria-[current=page]:text-white max-[700px]:px-[9px] max-[700px]:text-[11px] max-[700px]:[&_svg]:hidden max-[450px]:px-[7px] max-[450px]:text-[10px]" aria-current={active === "tracking" ? "page" : undefined}><ClipboardList size={16} aria-hidden="true" /> ติดตาม</Link>
+      <Link href="/vendor" prefetch={false} className="flex min-h-9 items-center gap-[7px] rounded-[10px] px-3.5 whitespace-nowrap text-[#52647c] hover:bg-white hover:text-[var(--accent-dark)] aria-[current=page]:bg-[var(--accent)] aria-[current=page]:text-white max-[700px]:px-[9px] max-[700px]:text-[11px] max-[700px]:[&_svg]:hidden max-[450px]:px-[7px] max-[450px]:text-[10px]" aria-current={active === "vendor" ? "page" : undefined}><Store size={16} aria-hidden="true" /> หน้าร้านค้า</Link>
     </nav>
   </div></header>;
 }
